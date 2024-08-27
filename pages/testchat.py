@@ -25,22 +25,24 @@ if prompt := st.chat_input("Type your message here..."):
     with st.chat_message("user"):
         st.markdown(prompt)
 
+    # Prepare the chat client
+    client = openai.ChatCompletion()
+
     # Generate AI response
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",  # Replace with the appropriate model name
+    response = client.create(
+        model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             *st.session_state.messages
         ],
-        max_tokens=150,
-        n=1,
-        stop=None,
-        temperature=0.7,
-    ).choices[0].message["content"]
+        max_tokens=150
+    )
+    
+    generated_text = response['choices'][0]['message']['content']
     
     # Display AI response in chat message container
     with st.chat_message("assistant"):
-        st.markdown(response)
+        st.markdown(generated_text)
     
     # Add assistant response to chat history
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.messages.append({"role": "assistant", "content": generated_text})
